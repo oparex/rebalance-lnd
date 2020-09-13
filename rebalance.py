@@ -12,11 +12,14 @@ from logic import Logic
 MAX_CHANNEL_CAPACITY = 16777215
 MAX_SATOSHIS_PER_TRANSACTION = 4294967
 
+LAST_CHANNELS = [[710335089135648768, 1000000], [709644595846447105, 6000000], [711522561697579008, 2500000], [709650093463896064, 2500000]]
+FIRST_CHANNELS = [[710251526247022593, 10000000]]
+
 
 def main():
     argument_parser = get_argument_parser()
     arguments = argument_parser.parse_args()
-    lnd = Lnd(arguments.lnddir, arguments.grpc)
+    lnd = Lnd(arguments.lnddir, arguments.grpc, arguments.max_fee_factor)
     first_hop_channel_id = vars(arguments)['from']
     to_channel = arguments.to
 
@@ -27,6 +30,10 @@ def main():
 
     if arguments.incoming is not None and not arguments.list_candidates:
         print("--outgoing and --incoming only work in conjunction with --list-candidates")
+        sys.exit(1)
+
+    if arguments.amount is None:
+        print("--amount argument is required")
         sys.exit(1)
 
     if arguments.list_candidates:
@@ -74,20 +81,36 @@ def main():
 
 
 def get_amount(arguments, first_hop_channel, last_hop_channel):
+    # if last_hop_channel:
+    #     amount = get_rebalance_amount(last_hop_channel)
+    # else:
+    #     amount = get_rebalance_amount(first_hop_channel)
+    #
+    # if arguments.percentage:
+    #     amount = int(round(amount * arguments.percentage / 100))
+    #
+    # if last_hop_channel and first_hop_channel:
+    #     rebalance_amount_from_channel = get_rebalance_amount(first_hop_channel)
+    #     amount = min(amount, rebalance_amount_from_channel)
+    #
+    # if arguments.amount:
+    #     amount = min(amount, int(arguments.amount))
+    #
+    # amount = min(amount, MAX_SATOSHIS_PER_TRANSACTION)
+    #
+    # return amount
+    amount = int(arguments.amount)
     if last_hop_channel:
-        amount = get_rebalance_amount(last_hop_channel)
-    else:
-        amount = get_rebalance_amount(first_hop_channel)
-
-    if arguments.percentage:
-        amount = int(round(amount * arguments.percentage / 100))
+        for last_channel in LAST_CHANNELS:
+            if last_hop_channel.chan_id == last_channel[0] and last_hop_channel.local_balance > last_channel[1]:
+                amount = 0
+                break
 
     if last_hop_channel and first_hop_channel:
-        rebalance_amount_from_channel = get_rebalance_amount(first_hop_channel)
-        amount = min(amount, rebalance_amount_from_channel)
-
-    if arguments.amount:
-        amount = min(amount, int(arguments.amount))
+        for first_channel in FIRST_CHANNELS:
+            if first_hop_channel.chan_id == first_channel[0] and first_hop_channel.local_balance < first_channel[1]:
+                amount = 0
+                break
 
     amount = min(amount, MAX_SATOSHIS_PER_TRANSACTION)
 

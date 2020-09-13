@@ -15,7 +15,7 @@ def debug(message):
 
 
 class Lnd:
-    def __init__(self, lnd_dir, server):
+    def __init__(self, lnd_dir, server, fee_limit):
         os.environ['GRPC_SSL_CIPHER_SUITES'] = 'HIGH+ECDSA'
         lnd_dir = expanduser(lnd_dir)
         combined_credentials = self.get_credentials(lnd_dir)
@@ -29,6 +29,7 @@ class Lnd:
         self.graph = None
         self.info = None
         self.channels = None
+        self.fee_limit = fee_limit
 
     @staticmethod
     def get_credentials(lnd_dir):
@@ -86,6 +87,7 @@ class Lnd:
             pub_key=self.get_own_pubkey(),
             last_hop_pubkey=last_hop_pubkey,
             amt=amount,
+            fee_limit={"fixed":self.fee_limit},
             ignored_edges=ignored_edges,
             ignored_nodes=ignored_nodes,
             use_mission_control=True,

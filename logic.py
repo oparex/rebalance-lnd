@@ -7,8 +7,9 @@ DEFAULT_FEE_RATE_MSAT = 0.001
 
 
 def debug(message):
-    sys.stderr.write(message + "\n")
-
+    # sys.stderr.write(message + "\n")
+    # using print to capture output in bash. would also work with stdout
+    print(message)
 
 def debugnobreak(message):
     sys.stderr.write(message)
@@ -57,22 +58,23 @@ class Logic:
             return False
 
         tried_routes.append(route)
-        debug("")
-        debug("Trying route #%d" % len(tried_routes))
-        debug(Routes.print_route(route))
+        # debug("")
+        # debug("Trying route #%d" % len(tried_routes))
+        # debug(Routes.print_route(route))
 
         response = self.lnd.send_payment(payment_request, route)
         is_successful = response.failure.code == 0
         if is_successful:
-            debug("")
-            debug("")
-            debug("")
+            # debug("")
+            # debug("")
+            # debug("")
             debug("Success! Paid fees: %s sat (%s msat)" % (route.total_fees, route.total_fees_msat))
-            debug("Successful route:")
-            debug(Routes.print_route(route))
-            debug("")
-            debug("")
-            debug("")
+            debug("Successful route: %s" % (Routes.print_route(route)))
+            # debug("Successful route:")
+            # debug(Routes.print_route(route))
+            # debug("")
+            # debug("")
+            # debug("")
             return True
         else:
             self.handle_error(response, route, routes)
@@ -127,9 +129,10 @@ class Logic:
         return ratio < self.channel_ratio
 
     def fees_too_high(self, route):
-        hops_with_fees = len(route.hops) - 1
-        lnd_fees = hops_with_fees * (DEFAULT_BASE_FEE_SAT_MSAT + (self.amount * DEFAULT_FEE_RATE_MSAT))
-        limit = self.max_fee_factor * lnd_fees
+        # hops_with_fees = len(route.hops) - 1
+        # lnd_fees = hops_with_fees * (DEFAULT_BASE_FEE_SAT_MSAT + (self.amount * DEFAULT_FEE_RATE_MSAT))
+        # limit = self.max_fee_factor * lnd_fees
+        limit = self.max_fee_factor * 1000
         return route.total_fees_msat > limit
 
     def generate_invoice(self):
