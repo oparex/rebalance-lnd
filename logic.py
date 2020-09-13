@@ -69,8 +69,10 @@ class Logic:
             # debug("")
             # debug("")
             # debug("")
-            debug("Success! Paid fees: %s sat (%s msat) %s" % (route.total_fees, route.total_fees_msat,
-                                                               datetime.datetime.now().strftime("%Y-%m%d %H:%M:%S")))
+            debug("Success in route #%d! Paid fees: %s sat (%s msat) %s" %
+                  (len(tried_routes), route.total_fees,
+                   route.total_fees_msat,
+                   datetime.datetime.now().strftime("%Y-%m%d %H:%M:%S")))
             debug("Successful route: %s" % (Routes.print_route(route)))
             # debug("Successful route:")
             # debug(Routes.print_route(route))
