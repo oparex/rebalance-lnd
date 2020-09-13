@@ -26,4 +26,10 @@ python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 
 python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 709650093463896064 -a 500000
 python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 709650093463896064 -a 200000
 
+echo "Starting bitstamp -> walet of satoshi rebalance"
+# bitstamp -> walet of satoshi
+python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 711575338232512512 -a 1000000
+python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 711575338232512512 -a 500000
+python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 711575338232512512 -a 200000
+
 echo "--------------------------------------- END REBALANCE @ `date` -------------------------------------------"
