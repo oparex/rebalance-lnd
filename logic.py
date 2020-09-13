@@ -1,3 +1,4 @@
+import datetime
 import sys
 
 from routes import Routes
@@ -68,7 +69,8 @@ class Logic:
             # debug("")
             # debug("")
             # debug("")
-            debug("Success! Paid fees: %s sat (%s msat)" % (route.total_fees, route.total_fees_msat))
+            debug("Success! Paid fees: %s sat (%s msat) %s" % (route.total_fees, route.total_fees_msat,
+                                                               datetime.datetime.now().strftime("%Y-%m%d %H:%M:%S")))
             debug("Successful route: %s" % (Routes.print_route(route)))
             # debug("Successful route:")
             # debug(Routes.print_route(route))
