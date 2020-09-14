@@ -188,7 +188,7 @@ def get_argument_parser():
                                  help="Exclude the given channel ID as the outgoing channel (no funds will be taken "
                                       "out of excluded channels)")
     rebalance_group.add_argument("--max-fee-factor",
-                                 type=float,
+                                 type=int,
                                  default=10,
                                  help="(default: 10) Reject routes that cost more than x times the lnd default "
                                       "(base: 1 sat, rate: 1 millionth sat) per hop on average")
