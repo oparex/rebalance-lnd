@@ -50,7 +50,9 @@ class Logic:
 
             success = self.try_route(payment_request, route, routes, tried_routes)
             if success:
-                return True
+                # go into recursion if successfully rebalanced
+                return self.rebalance()
+                # return True
         debug("Could not find any suitable route")
         return False
 
