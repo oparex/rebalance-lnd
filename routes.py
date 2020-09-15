@@ -1,7 +1,7 @@
 import base64
 import sys
 
-MAX_ROUTES_TO_REQUEST = 100
+MAX_ROUTES_TO_REQUEST = 30
 
 
 def debug(message):
