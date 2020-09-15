@@ -32,4 +32,12 @@ python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 
 python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 711575338232512512 -a 500000 --max-fee-factor 30
 python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 711575338232512512 -a 200000 --max-fee-factor 10
 
+echo "Starting bitstamp -> citadel21 rebalance"
+# bitstamp -> citadel21
+python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 706717695977979905 -a 200000 --max-fee-factor 10
+
+echo "Starting bitstamp -> rompert rebalance"
+# bitstamp -> rompert
+python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 709139920050323456 -a 100000 --max-fee-factor 10
+
 echo "--------------------------------------- END REBALANCE @ `date` -------------------------------------------"
