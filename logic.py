@@ -44,6 +44,8 @@ class Logic:
     def rebalance(self):
         self.update_channels()
         if self.channels_balanced():
+            debug("First channel local balance %d" % self.first_hop_channel.local_balance)
+            debug("Last channel remote balance %d" % self.last_hop_channel.remote_balance)
             debug("Done with rabalancing %d and %d"
                   % (self.first_hop_channel_id, self.last_hop_channel_id))
             return True
