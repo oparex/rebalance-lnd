@@ -97,6 +97,8 @@ class Logic:
         if self.route_is_invalid(route, routes):
             return False
 
+        debug("trying route %s" % Routes.print_route(route))
+
         tried_routes.append(route)
 
         response = self.lnd.send_payment(payment_request, route)
