@@ -32,8 +32,8 @@ class Logic:
         self.last_hop_channel_id = last_hop_channel_id
         self.first_hop_channel = None
         self.last_hop_channel = None
-        self.from_ratio = from_ratio
-        self.to_ratio = to_ratio
+        self.from_ratio = from_ratio / 100
+        self.to_ratio = to_ratio / 100
         self.amount = amount
         self.excluded = []
         self.max_fee_factor = max_fee_factor
@@ -44,8 +44,6 @@ class Logic:
     def rebalance(self):
         self.update_channels()
         if self.channels_balanced():
-            debug("First channel local balance %d" % self.first_hop_channel.local_balance)
-            debug("Last channel local balance %d" % self.last_hop_channel.local_balance)
             debug("Done with rabalancing %d and %d"
                   % (self.first_hop_channel_id, self.last_hop_channel_id))
             return True
@@ -121,18 +119,14 @@ class Logic:
                 self.last_hop_channel = channel
 
     def channels_balanced(self):
-        local_balance = float(self.last_hop_channel.local_balance)
-        remote_balance = float(self.last_hop_channel.remote_balance)
+        local_balance = self.last_hop_channel.local_balance
+        remote_balance = self.last_hop_channel.remote_balance
         if local_balance / (local_balance + remote_balance) > self.to_ratio:
-            debug("last hop balances %f %f" % (local_balance, remote_balance))
-            debug("last hop balanced %f" % (local_balance / (local_balance + remote_balance)))
             return True
 
-        local_balance = float(self.first_hop_channel.local_balance)
-        remote_balance = float(self.first_hop_channel.remote_balance)
+        local_balance = self.first_hop_channel.local_balance
+        remote_balance = self.first_hop_channel.remote_balance
         if local_balance / (local_balance + remote_balance) < self.from_ratio:
-            debug("first hop balances %f %f" % (local_balance, remote_balance))
-            debug("first hop balanced %f" % (local_balance / (local_balance + remote_balance)))
             return True
 
         return False
