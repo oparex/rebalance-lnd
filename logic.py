@@ -45,7 +45,7 @@ class Logic:
         self.update_channels()
         if self.channels_balanced():
             debug("First channel local balance %d" % self.first_hop_channel.local_balance)
-            debug("Last channel remote balance %d" % self.last_hop_channel.remote_balance)
+            debug("Last channel local balance %d" % self.last_hop_channel.local_balance)
             debug("Done with rabalancing %d and %d"
                   % (self.first_hop_channel_id, self.last_hop_channel_id))
             return True
@@ -124,11 +124,13 @@ class Logic:
         local_balance = self.last_hop_channel.local_balance
         remote_balance = self.last_hop_channel.remote_balance
         if local_balance / (local_balance + remote_balance) > self.to_ratio:
+            debug("last hop balanced %f" % local_balance / (local_balance + remote_balance))
             return True
 
         local_balance = self.first_hop_channel.local_balance
         remote_balance = self.first_hop_channel.remote_balance
         if local_balance / (local_balance + remote_balance) < self.from_ratio:
+            debug("first hop balanced %f" % local_balance / (local_balance + remote_balance))
             return True
 
         return False
