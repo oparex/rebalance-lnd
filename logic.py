@@ -95,6 +95,7 @@ class Logic:
 
     def try_route(self, payment_request, route, routes, tried_routes):
         if self.route_is_invalid(route, routes):
+            debug("Invalid route: %s" % (Routes.print_route(route)))
             return False
 
         debug("trying route %s" % Routes.print_route(route))
