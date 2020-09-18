@@ -58,7 +58,7 @@ class Logic:
             return False
 
         debug(("Sending {:,} satoshis to rebalance to channel with ID %d from channel with ID %d"
-               % self.last_hop_channel.chan_id, self.first_hop_channel.chan_id).format(self.amount))
+               % (self.last_hop_channel.chan_id, self.first_hop_channel.chan_id)).format(self.amount))
 
         payment_request = self.generate_invoice()
         routes = Routes(self.lnd,
