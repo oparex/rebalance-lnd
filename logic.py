@@ -17,43 +17,79 @@ def debugnobreak(message):
 
 
 class Logic:
-    def __init__(self, lnd, first_hop_channel, last_hop_channel, amount, channel_ratio, excluded, max_fee_factor):
+    def __init__(self,
+                 lnd,
+                 first_hop_channel_id,
+                 last_hop_channel_id,
+                 from_ratio,
+                 to_ratio,
+                 amount,
+                 max_amount_halvings,
+                 max_fee_factor,
+                 max_routes_to_request):
         self.lnd = lnd
-        self.first_hop_channel = first_hop_channel
-        self.last_hop_channel = last_hop_channel
+        self.first_hop_channel_id = first_hop_channel_id
+        self.last_hop_channel_id = last_hop_channel_id
+        self.first_hop_channel = None
+        self.last_hop_channel = None
+        self.from_ratio = from_ratio
+        self.to_ratio = to_ratio
         self.amount = amount
-        self.channel_ratio = channel_ratio
         self.excluded = []
-        if excluded:
-            self.excluded = excluded
         self.max_fee_factor = max_fee_factor
+        self.max_routes_to_request = max_routes_to_request
+        self.max_amount_halvings = max_amount_halvings
+        self.num_amount_halvings = 0
 
     def rebalance(self):
-        if self.last_hop_channel:
-            debug(("Sending {:,} satoshis to rebalance to channel with ID %d"
-                   % self.last_hop_channel.chan_id).format(self.amount))
-        else:
-            debug("Sending {:,} satoshis.".format(self.amount))
-        if self.channel_ratio != 0.5:
-            debug("Channel ratio used is %d%%" % int(self.channel_ratio * 100))
-        if self.first_hop_channel:
-            debug("Forced first channel has ID %d" % self.first_hop_channel.chan_id)
+        self.update_channels()
+        if self.channels_balanced():
+            debug("Done with rabalancing %d and %d"
+                  % (self.first_hop_channel_id, self.last_hop_channel_id))
+            return True
+        if self.amount_too_big():
+            debug("Amount %d is too big for current local and/or remote balance of first and/or last hop channel."
+                  % self.amount)
+            if self.num_amount_halvings < self.max_amount_halvings + 1:
+                # if number of halvings is lower then max allowed halvings, halve the amount and try another recursion
+                self.amount /= 2
+                self.num_amount_halvings += 1
+                return self.rebalance()
+            return False
+
+        debug(("Sending {:,} satoshis to rebalance to channel with ID %d from channel with ID %d"
+               % self.last_hop_channel.chan_id, self.first_hop_channel.chan_id).format(self.amount))
 
         payment_request = self.generate_invoice()
-        routes = Routes(self.lnd, payment_request, self.first_hop_channel, self.last_hop_channel)
-
-        self.initialize_ignored_channels(routes)
+        routes = Routes(self.lnd,
+                        payment_request,
+                        self.first_hop_channel,
+                        self.last_hop_channel,
+                        self.max_routes_to_request)
 
         tried_routes = []
         while routes.has_next():
             route = routes.get_next()
-
             success = self.try_route(payment_request, route, routes, tried_routes)
             if success:
-                # go into recursion if successfully rebalanced
-                return self.rebalance()
-                # return True
-        debug("Could not find any suitable route")
+                self.update_channels()
+                if self.channels_balanced():
+                    debug("Done with rabalancing %d and %d"
+                          % (self.first_hop_channel.chan_id, self.last_hop_channel.chan_id))
+                    return True
+                if self.amount_too_big():
+                    debug(
+                        "Amount %d is too big for current local and/or remote balance of first and/or last hop channel."
+                        % self.amount)
+                    if self.num_amount_halvings < self.max_amount_halvings + 1:
+                        self.amount /= 2
+                        self.num_amount_halvings += 1
+                        return self.rebalance()
+        debug("All routes exhausted")
+        if self.num_amount_halvings < self.max_amount_halvings + 1:
+            self.amount /= 2
+            self.num_amount_halvings += 1
+            return self.rebalance()
         return False
 
     def try_route(self, payment_request, route, routes, tried_routes):
@@ -61,30 +97,44 @@ class Logic:
             return False
 
         tried_routes.append(route)
-        # debug("")
-        # debug("Trying route #%d" % len(tried_routes))
-        # debug(Routes.print_route(route))
 
         response = self.lnd.send_payment(payment_request, route)
         is_successful = response.failure.code == 0
         if is_successful:
-            # debug("")
-            # debug("")
-            # debug("")
             debug("Success in route #%d! Paid fees: %s sat (%s msat) %s" %
                   (len(tried_routes), route.total_fees,
                    route.total_fees_msat,
                    datetime.datetime.now().strftime("%Y-%m%d %H:%M:%S")))
             debug("Successful route: %s" % (Routes.print_route(route)))
-            # debug("Successful route:")
-            # debug(Routes.print_route(route))
-            # debug("")
-            # debug("")
-            # debug("")
             return True
         else:
             self.handle_error(response, route, routes)
             return False
+
+    def update_channels(self):
+        for channel in self.lnd.get_channels():
+            if channel.chan_id == self.first_hop_channel_id:
+                self.first_hop_channel = channel
+            if channel.chan_id == self.last_hop_channel_id:
+                self.last_hop_channel = channel
+
+    def channels_balanced(self):
+        local_balance = self.last_hop_channel.local_balance
+        remote_balance = self.last_hop_channel.remote_balance
+        if local_balance / (local_balance + remote_balance) > self.to_ratio:
+            return True
+
+        local_balance = self.first_hop_channel.local_balance
+        remote_balance = self.first_hop_channel.remote_balance
+        if local_balance / (local_balance + remote_balance) < self.from_ratio:
+            return True
+
+        return False
+
+    def amount_too_big(self):
+        if self.first_hop_channel.local_balance - self.amount < 0 or self.last_hop_channel.remote_balance < 0:
+            return True
+        return False
 
     @staticmethod
     def handle_error(response, route, routes):
@@ -112,27 +162,10 @@ class Logic:
         return failure_source_pubkey
 
     def route_is_invalid(self, route, routes):
-        first_hop = route.hops[0]
-        if self.low_local_ratio_after_sending(first_hop, route.total_amt):
-            debugnobreak("Low local ratio after sending, ")
-            routes.ignore_first_hop(self.get_channel_for_channel_id(first_hop.chan_id))
-            return True
         if self.fees_too_high(route):
             routes.ignore_node_with_highest_fee(route)
             return True
         return False
-
-    def low_local_ratio_after_sending(self, first_hop, total_amount):
-        if self.first_hop_channel:
-            # Just use the computed/specified amount to drain the first hop, ignoring fees
-            return False
-        channel_id = first_hop.chan_id
-        channel = self.get_channel_for_channel_id(channel_id)
-
-        remote = channel.remote_balance + total_amount
-        local = channel.local_balance - total_amount
-        ratio = float(local) / (remote + local)
-        return ratio < self.channel_ratio
 
     def fees_too_high(self, route):
         # hops_with_fees = len(route.hops) - 1
@@ -152,11 +185,3 @@ class Logic:
         for channel in self.lnd.get_channels():
             if channel.chan_id == channel_id:
                 return channel
-
-    def initialize_ignored_channels(self, routes):
-        for channel in self.lnd.get_channels():
-            if self.low_local_ratio_after_sending(channel, self.amount):
-                routes.ignore_first_hop(channel, show_message=False)
-            if channel.chan_id in self.excluded:
-                debugnobreak("Channel is excluded, ")
-                routes.ignore_first_hop(channel)

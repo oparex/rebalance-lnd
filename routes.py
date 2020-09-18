@@ -1,8 +1,6 @@
 import base64
 import sys
 
-MAX_ROUTES_TO_REQUEST = 30
-
 
 def debug(message):
     sys.stderr.write(message + "\n")
@@ -13,7 +11,7 @@ def debugnobreak(message):
 
 
 class Routes:
-    def __init__(self, lnd, payment_request, first_hop_channel, last_hop_channel):
+    def __init__(self, lnd, payment_request, first_hop_channel, last_hop_channel, max_routes_to_request):
         self.lnd = lnd
         self.payment_request = payment_request
         self.first_hop_channel = first_hop_channel
@@ -23,6 +21,7 @@ class Routes:
         self.ignored_edges = []
         self.ignored_nodes = []
         self.num_requested_routes = 0
+        self.max_routes_to_request = max_routes_to_request
 
     def has_next(self):
         self.update_routes()
@@ -40,7 +39,7 @@ class Routes:
         while True:
             if self.returned_routes < self.all_routes:
                 return
-            if self.num_requested_routes >= MAX_ROUTES_TO_REQUEST:
+            if self.num_requested_routes >= self.max_routes_to_request:
                 return
             self.request_route()
 
@@ -57,7 +56,7 @@ class Routes:
         routes = self.lnd.get_route(last_hop_pubkey, amount, self.ignored_edges,
                                     self.ignored_nodes, first_hop_channel_id)
         if routes is None:
-            self.num_requested_routes = MAX_ROUTES_TO_REQUEST
+            self.num_requested_routes = self.max_routes_to_request
         else:
             self.num_requested_routes += 1
             for route in routes:
