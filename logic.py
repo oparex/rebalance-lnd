@@ -52,7 +52,7 @@ class Logic:
                   % self.amount)
             if self.num_amount_halvings < self.max_amount_halvings + 1:
                 # if number of halvings is lower then max allowed halvings, halve the amount and try another recursion
-                self.amount /= 2
+                self.amount //= 2
                 self.num_amount_halvings += 1
                 return self.rebalance()
             return False
@@ -82,12 +82,12 @@ class Logic:
                         "Amount %d is too big for current local and/or remote balance of first and/or last hop channel."
                         % self.amount)
                     if self.num_amount_halvings < self.max_amount_halvings + 1:
-                        self.amount /= 2
+                        self.amount //= 2
                         self.num_amount_halvings += 1
                         return self.rebalance()
         debug("All routes exhausted")
         if self.num_amount_halvings < self.max_amount_halvings + 1:
-            self.amount /= 2
+            self.amount //= 2
             self.num_amount_halvings += 1
             return self.rebalance()
         return False
