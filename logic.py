@@ -87,7 +87,8 @@ class Logic:
                         self.amount //= 2
                         self.num_amount_halvings += 1
                         return self.rebalance()
-                routes.payment_request = self.generate_invoice()
+                payment_request = self.generate_invoice()
+                routes.payment_request = payment_request
                 debug("continuing with rebalance")
         debug("All routes exhausted")
         if self.num_amount_halvings < self.max_amount_halvings:
