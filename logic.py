@@ -124,12 +124,14 @@ class Logic:
         local_balance = self.last_hop_channel.local_balance
         remote_balance = self.last_hop_channel.remote_balance
         if local_balance / (local_balance + remote_balance) > self.to_ratio:
+            debug("last hop balances %d %d" % (local_balance, remote_balance))
             debug("last hop balanced %d" % (local_balance / (local_balance + remote_balance)))
             return True
 
         local_balance = self.first_hop_channel.local_balance
         remote_balance = self.first_hop_channel.remote_balance
         if local_balance / (local_balance + remote_balance) < self.from_ratio:
+            debug("first hop balances %d %d" % (local_balance, remote_balance))
             debug("first hop balanced %d" % (local_balance / (local_balance + remote_balance)))
             return True
 
