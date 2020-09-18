@@ -44,6 +44,8 @@ class Logic:
     def rebalance(self):
         self.update_channels()
         if self.channels_balanced():
+            debug("First channel local balance %d" % self.first_hop_channel.local_balance)
+            debug("Last channel local balance %d" % self.last_hop_channel.local_balance)
             debug("Done with rabalancing %d and %d"
                   % (self.first_hop_channel_id, self.last_hop_channel_id))
             return True
@@ -122,11 +124,15 @@ class Logic:
         local_balance = float(self.last_hop_channel.local_balance)
         remote_balance = float(self.last_hop_channel.remote_balance)
         if local_balance / (local_balance + remote_balance) > self.to_ratio:
+            debug("last hop balances %d %d" % (local_balance, remote_balance))
+            debug("last hop balanced %d" % (local_balance / (local_balance + remote_balance)))
             return True
 
         local_balance = float(self.first_hop_channel.local_balance)
         remote_balance = float(self.first_hop_channel.remote_balance)
         if local_balance / (local_balance + remote_balance) < self.from_ratio:
+            debug("first hop balances %d %d" % (local_balance, remote_balance))
+            debug("first hop balanced %d" % (local_balance / (local_balance + remote_balance)))
             return True
 
         return False
