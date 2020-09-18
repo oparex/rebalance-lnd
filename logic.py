@@ -72,6 +72,7 @@ class Logic:
             route = routes.get_next()
             success = self.try_route(payment_request, route, routes, tried_routes)
             if success:
+                debug("one rebalance successful")
                 self.update_channels()
                 if self.channels_balanced():
                     debug("Done with rabalancing %d and %d"
@@ -85,6 +86,7 @@ class Logic:
                         self.amount //= 2
                         self.num_amount_halvings += 1
                         return self.rebalance()
+                debug("continuing with rebalance")
                 payment_request = self.generate_invoice()
         debug("All routes exhausted")
         if self.num_amount_halvings < self.max_amount_halvings:
