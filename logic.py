@@ -112,10 +112,13 @@ class Logic:
             return False
 
     def update_channels(self):
+        debug("updating channels")
         for channel in self.lnd.get_channels():
             if channel.chan_id == self.first_hop_channel_id:
+                debug("found from channel")
                 self.first_hop_channel = channel
             if channel.chan_id == self.last_hop_channel_id:
+                debug("found to channel")
                 self.last_hop_channel = channel
 
     def channels_balanced(self):
