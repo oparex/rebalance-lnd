@@ -50,10 +50,7 @@ class Logic:
         if self.amount_too_big():
             debug("Amount %d is too big for current local and/or remote balance of first and/or last hop channel."
                   % self.amount)
-            if self.num_amount_halvings < self.max_amount_halvings:
-                # if number of halvings is lower then max allowed halvings, halve the amount and try another recursion
-                self.amount //= 2
-                self.num_amount_halvings += 1
+            if self.amount_halving():
                 return self.rebalance()
             return False
 
@@ -81,14 +78,10 @@ class Logic:
                     debug(
                         "Amount %d is too big for current local and/or remote balance of first and/or last hop channel."
                         % self.amount)
-                    if self.num_amount_halvings < self.max_amount_halvings:
-                        self.amount //= 2
-                        self.num_amount_halvings += 1
+                    self.amount_halving()
                 return self.rebalance()
         debug("All routes exhausted")
-        if self.num_amount_halvings < self.max_amount_halvings:
-            self.amount //= 2
-            self.num_amount_halvings += 1
+        if self.amount_halving():
             return self.rebalance()
         return False
 
@@ -117,6 +110,14 @@ class Logic:
                 self.first_hop_channel = channel
             if channel.chan_id == self.last_hop_channel_id:
                 self.last_hop_channel = channel
+
+    def amount_halving(self):
+        if self.num_amount_halvings < self.max_amount_halvings:
+            self.amount //= 2
+            self.max_fee_factor //= 2
+            self.num_amount_halvings += 1
+            return True
+        return False
 
     def channels_balanced(self):
         local_balance = self.last_hop_channel.local_balance
