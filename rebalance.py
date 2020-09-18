@@ -39,7 +39,7 @@ def main():
     max_fee_factor = arguments.max_fee_factor
     max_routes_to_request = arguments.max_routes_to_request
 
-    return Logic(lnd, from_channel, to_ratio, from_ratio, to_ratio, amount, max_amount_halvings,
+    return Logic(lnd, from_channel, to_channel, from_ratio, to_ratio, amount, max_amount_halvings,
                  max_fee_factor, max_routes_to_request).rebalance()
 
 
