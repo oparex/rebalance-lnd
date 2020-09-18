@@ -69,11 +69,9 @@ class Logic:
 
         tried_routes = []
         while routes.has_next():
-            debug("trying new route")
             route = routes.get_next()
             success = self.try_route(payment_request, route, routes, tried_routes)
             if success:
-                debug("one rebalance successful")
                 self.update_channels()
                 if self.channels_balanced():
                     debug("Done with rabalancing %d and %d"
@@ -86,10 +84,7 @@ class Logic:
                     if self.num_amount_halvings < self.max_amount_halvings:
                         self.amount //= 2
                         self.num_amount_halvings += 1
-                        return self.rebalance()
-                payment_request = self.generate_invoice()
-                routes.payment_request = payment_request
-                debug("continuing with rebalance")
+                return self.rebalance()
         debug("All routes exhausted")
         if self.num_amount_halvings < self.max_amount_halvings:
             self.amount //= 2
@@ -99,10 +94,7 @@ class Logic:
 
     def try_route(self, payment_request, route, routes, tried_routes):
         if self.route_is_invalid(route, routes):
-            debug("Invalid route: %s" % (Routes.print_route(route)))
             return False
-
-        debug("trying route %s" % Routes.print_route(route))
 
         tried_routes.append(route)
 

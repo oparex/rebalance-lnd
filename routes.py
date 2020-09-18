@@ -25,7 +25,6 @@ class Routes:
 
     def has_next(self):
         self.update_routes()
-        debug("has next: %r" % (self.returned_routes < self.all_routes))
         return self.returned_routes < self.all_routes
 
     def get_next(self):
@@ -39,7 +38,6 @@ class Routes:
     def update_routes(self):
         while True:
             if self.returned_routes < self.all_routes:
-                debug("update routes: %r" % (self.returned_routes < self.all_routes))
                 return
             if self.num_requested_routes >= self.max_routes_to_request:
                 return
