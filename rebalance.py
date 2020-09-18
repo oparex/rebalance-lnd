@@ -79,7 +79,7 @@ def get_argument_parser():
                               type=int,
                               default=800000,
                               help="Amount to start the rebalance, in satoshis.")
-    amount_group.add_argument("-l", "--max_amount_halvings",
+    rebalance_group.add_argument("-l", "--max_amount_halvings",
                               type=int,
                               default=5,
                               help="Number of amount halvings in the rebalance process.")
