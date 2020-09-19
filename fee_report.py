@@ -35,12 +35,12 @@ class FeeReport:
                     report["month_fee_reb"] += payment.fee_msat
 
         print("-----------------------------------------------------------------------")
-        print("------| routing fees collected | rebalance fees paid |   sum    |------")
-        print("day---|                     %d |                  %d |       %d |------" % (
+        print("------|\trouting fees collected\t|\trebalance fees paid\t|\tsum\t|------")
+        print("day---|\t%d\t|\t%d\t|\t%d\t|------" % (
             report["day_fee_sum"], report["day_fee_reb"], report["day_fee_sum"] - report["day_fee_reb"]))
-        print("week--|                     %d |                  %d |       %d |------" % (
+        print("week--|\t%d\t|\t%d\t|\t%d\t|------" % (
             report["week_fee_sum"], report["week_fee_reb"], report["week_fee_sum"] - report["week_fee_reb"]))
-        print("month--|                     %d |                  %d |       %d |-----" % (
+        print("month-|\t%d\t|\t%d\t|\t%d\t|------" % (
         report["month_fee_sum"], report["month_fee_reb"], report["month_fee_sum"] - report["month_fee_reb"]))
         print("-----------------------------------------------------------------------")
 
