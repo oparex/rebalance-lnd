@@ -24,7 +24,7 @@ class FeeReport:
         list_payments_response = self.lnd.list_payments()
 
         for payment in list_payments_response.payments:
-            print(payment)
-            break
+            if payment.payment_hash in rebalance_invoice_payment_hashs:
+                print payment.fee_msat
 
         return True
