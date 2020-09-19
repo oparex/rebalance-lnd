@@ -66,8 +66,7 @@ def get_argument_parser():
                         dest="grpc",
                         help="(default localhost:10009) lnd gRPC endpoint")
     parser.add_argument("--fee-report",
-                        type=bool,
-                        default=False,
+                        action='store_true',
                         help="(default false) toggle to print fee report")
     rebalance_group = parser.add_argument_group("rebalance",
                                                 "Rebalance a channel. You need to specify at least"
