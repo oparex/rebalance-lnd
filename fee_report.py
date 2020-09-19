@@ -35,7 +35,7 @@ class FeeReport:
                     report["month_fee_reb"] += payment.fee_msat
 
         print("-----------------------------------------------------------------------")
-        print("------|\tcollected\t|\tpaid\t|\tsum\t|------")
+        print("------|\tcollected |\tpaid |\tsum |------")
         print("day---|\t%d\t|\t%d\t|\t%d\t|------" % (
             report["day_fee_sum"],
             report["day_fee_reb"] // 1000,
