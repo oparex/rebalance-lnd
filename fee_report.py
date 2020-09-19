@@ -46,6 +46,7 @@ class FeeReport:
         while i < 5:
             list_invoices_response = self.lnd.list_invoices(first_index_offset - 100)
             first_index_offset = list_invoices_response.first_index_offset
+            i += 1
 
             print(i, list_invoices_response.invoices[0].creation_date, list_invoices_response.invoices[0].settle_date,
                   list_invoices_response.invoices[-1].creation_date, list_invoices_response.invoices[-1].settle_date)
