@@ -46,7 +46,7 @@ class FeeReport:
             i += 1
 
             for invoice in list_invoices_response.invoices:
-                print(invoice.creation_date, invoice.settle_date)
+                print(i, invoice.creation_date, invoice.settle_date)
                 # if invoice.settled and invoice.settle_date < now - MONTH:
                 #     print(i, invoice.settle_date, now)
                 #     return hashes
