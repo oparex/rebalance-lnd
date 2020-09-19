@@ -14,9 +14,9 @@ class FeeReport:
         report = {}
 
         feereport_response = self.lnd.get_feereport()
-        report["day_fee_sum"] = feereport_response.day_fee_sum * 1000
-        report["week_fee_sum"] = feereport_response.week_fee_sum * 1000
-        report["month_fee_sum"] = feereport_response.month_fee_sum * 1000
+        report["day_fee_sum"] = feereport_response.day_fee_sum
+        report["week_fee_sum"] = feereport_response.week_fee_sum
+        report["month_fee_sum"] = feereport_response.month_fee_sum
         report["day_fee_reb"] = 0
         report["week_fee_reb"] = 0
         report["month_fee_reb"] = 0
@@ -37,11 +37,17 @@ class FeeReport:
         print("-----------------------------------------------------------------------")
         print("------|\trouting fees collected\t|\trebalance fees paid\t|\tsum\t|------")
         print("day---|\t%d\t|\t%d\t|\t%d\t|------" % (
-            report["day_fee_sum"], report["day_fee_reb"], report["day_fee_sum"] - report["day_fee_reb"]))
+            report["day_fee_sum"],
+            report["day_fee_reb"] // 1000,
+            report["day_fee_sum"] - report["day_fee_reb"] // 1000))
         print("week--|\t%d\t|\t%d\t|\t%d\t|------" % (
-            report["week_fee_sum"], report["week_fee_reb"], report["week_fee_sum"] - report["week_fee_reb"]))
+            report["week_fee_sum"],
+            report["week_fee_reb"] // 1000,
+            report["week_fee_sum"] - report["week_fee_reb"] // 1000))
         print("month-|\t%d\t|\t%d\t|\t%d\t|------" % (
-        report["month_fee_sum"], report["month_fee_reb"], report["month_fee_sum"] - report["month_fee_reb"]))
+        report["month_fee_sum"],
+        report["month_fee_reb"] // 1000,
+        report["month_fee_sum"] - report["month_fee_reb"] // 1000))
         print("-----------------------------------------------------------------------")
 
         return True
