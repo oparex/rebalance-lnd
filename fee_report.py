@@ -24,7 +24,7 @@ class FeeReport:
         list_payments_response = self.lnd.list_payments()
 
         for payment in list_payments_response.payments:
-            print payment
+            print(payment)
             break
 
         return True
