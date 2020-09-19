@@ -35,7 +35,6 @@ class Logic:
         self.from_ratio = from_ratio / 100
         self.to_ratio = to_ratio / 100
         self.amount = amount
-        self.excluded = []
         self.max_fee_factor = max_fee_factor
         self.max_routes_to_request = max_routes_to_request
         self.max_amount_halvings = max_amount_halvings
@@ -50,8 +49,6 @@ class Logic:
         if self.amount_too_big():
             debug("Amount %d is too big for current local and/or remote balance of first and/or last hop channel."
                   % self.amount)
-            if self.amount_halving():
-                return self.rebalance()
             return False
 
         debug(("Sending {:,} satoshis to rebalance to channel with ID %d from channel with ID %d"
@@ -78,16 +75,31 @@ class Logic:
                     debug(
                         "Amount %d is too big for current local and/or remote balance of first and/or last hop channel."
                         % self.amount)
-                    if not self.amount_halving():
-                        return False
-                return self.rebalance()
+                    return False
+                return Logic(self.lnd,
+                             self.first_hop_channel_id,
+                             self.last_hop_channel_id,
+                             self.from_ratio,
+                             self.to_ratio,
+                             self.amount,
+                             self.max_amount_halvings,
+                             self.max_fee_factor,
+                             self.max_routes_to_request).rebalance()
         debug("All routes exhausted")
-        if self.amount_halving():
-            return self.rebalance()
+        if self.num_amount_halvings < self.max_amount_halvings:
+            return Logic(self.lnd,
+                         self.first_hop_channel_id,
+                         self.last_hop_channel_id,
+                         self.from_ratio,
+                         self.to_ratio,
+                         self.amount // 2,
+                         self.max_amount_halvings,
+                         self.max_fee_factor // 2,
+                         self.max_routes_to_request).rebalance()
         return False
 
     def try_route(self, payment_request, route, routes, tried_routes):
-        if self.route_is_invalid(route, routes):
+        if self.route_is_invalid(route):
             return False
 
         tried_routes.append(route)
@@ -111,14 +123,6 @@ class Logic:
                 self.first_hop_channel = channel
             if channel.chan_id == self.last_hop_channel_id:
                 self.last_hop_channel = channel
-
-    def amount_halving(self):
-        if self.num_amount_halvings < self.max_amount_halvings:
-            self.amount //= 2
-            self.max_fee_factor //= 2
-            self.num_amount_halvings += 1
-            return True
-        return False
 
     def channels_balanced(self):
         local_balance = self.last_hop_channel.local_balance
@@ -163,9 +167,8 @@ class Logic:
             failure_source_pubkey = route.hops[response.failure.failure_source_index - 1].pub_key
         return failure_source_pubkey
 
-    def route_is_invalid(self, route, routes):
+    def route_is_invalid(self, route):
         if self.fees_too_high(route):
-            # routes.ignore_node_with_highest_fee(route)
             debugnobreak("Route fee is too high @ %d msat \n" % route.total_fees_msat)
             return True
         return False
