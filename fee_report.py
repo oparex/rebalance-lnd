@@ -5,5 +5,7 @@ class FeeReport:
         self.lnd = lnd
 
     def generate(self):
-        print(self.lnd.get_feereport())
+        feereport = self.lnd.get_feereport()
+        invoices = self.lnd.list_invoices(10)
+        print(invoices)
         return True
