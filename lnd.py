@@ -67,6 +67,7 @@ class Lnd:
     def list_invoices(self, index_offset):
         list_invoices_request = ln.ListInvoiceRequest(
             index_offset=index_offset,
+            reversed=True,
         )
         return self.stub.ListInvoices(list_invoices_request)
 
