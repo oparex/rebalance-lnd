@@ -26,7 +26,8 @@ class Logic:
                  amount,
                  max_amount_halvings,
                  max_fee_factor,
-                 max_routes_to_request):
+                 max_routes_to_request,
+                 num_amount_halvings):
         self.lnd = lnd
         self.first_hop_channel_id = first_hop_channel_id
         self.last_hop_channel_id = last_hop_channel_id
@@ -38,7 +39,7 @@ class Logic:
         self.max_fee_factor = max_fee_factor
         self.max_routes_to_request = max_routes_to_request
         self.max_amount_halvings = max_amount_halvings
-        self.num_amount_halvings = 0
+        self.num_amount_halvings = num_amount_halvings
 
     def rebalance(self):
         self.update_channels()
@@ -84,7 +85,8 @@ class Logic:
                              self.amount,
                              self.max_amount_halvings,
                              self.max_fee_factor,
-                             self.max_routes_to_request).rebalance()
+                             self.max_routes_to_request,
+                             self.num_amount_halvings + 1).rebalance()
         debug("All routes exhausted")
         if self.num_amount_halvings < self.max_amount_halvings:
             return Logic(self.lnd,
@@ -95,7 +97,8 @@ class Logic:
                          self.amount // 2,
                          self.max_amount_halvings,
                          self.max_fee_factor // 2,
-                         self.max_routes_to_request).rebalance()
+                         self.max_routes_to_request,
+                         self.num_amount_halvings + 1).rebalance()
         return False
 
     def try_route(self, payment_request, route, routes, tried_routes):
