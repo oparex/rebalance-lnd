@@ -34,7 +34,15 @@ class FeeReport:
                 if payment.creation_date > now - MONTH:
                     report["month_fee_reb"] += payment.fee_msat
 
-        print(report)
+        print("-----------------------------------------------------------------------")
+        print("------| routing fees collected | rebalance fees paid |   sum    |------")
+        print("day---|                     %d |                  %d |       %d |------" % (
+            report["day_fee_sum"], report["day_fee_reb"], report["day_fee_sum"] - report["day_fee_reb"]))
+        print("week--|                     %d |                  %d |       %d |------" % (
+            report["week_fee_sum"], report["week_fee_reb"], report["week_fee_sum"] - report["week_fee_reb"]))
+        print("month--|                     %d |                  %d |       %d |-----" % (
+        report["month_fee_sum"], report["month_fee_reb"], report["month_fee_sum"] - report["month_fee_reb"]))
+        print("-----------------------------------------------------------------------")
 
         return True
 
