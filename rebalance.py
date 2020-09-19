@@ -102,7 +102,7 @@ def get_argument_parser():
                                       "(base: 1 sat, rate: 1 millionth sat) per hop on average")
     rebalance_group.add_argument("-n", "--max-routes_to_request",
                                  type=int,
-                                 default=30,
+                                 default=10,
                                  help="(default: 30) Number of routes to request from lnd")
     return parser
 
