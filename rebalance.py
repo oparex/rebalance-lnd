@@ -89,7 +89,7 @@ def get_argument_parser():
                               help="Amount to start the rebalance, in satoshis.")
     rebalance_group.add_argument("-l", "--max_amount_halvings",
                               type=int,
-                              default=5,
+                              default=0,
                               help="Number of amount halvings in the rebalance process.")
     rebalance_group.add_argument("-fr", "--from_ratio",
                                  type=int,
