@@ -17,12 +17,17 @@ class FeeReport:
         report["month_fee_sum"] = feereport_response.month_fee_sum
 
         rebalance_invoice_hashes = self.get_invoice_hashes(now)
+        print(len(rebalance_invoice_hashes))
 
         list_payments_response = self.lnd.list_payments()
 
+        payments_found = 0
+
         for payment in list_payments_response.payments:
             if payment.payment_hash in rebalance_invoice_hashes:
-                print(payment.fee_msat)
+                payments_found += 1
+
+        print(payments_found)
 
         return True
 
@@ -35,7 +40,6 @@ class FeeReport:
 
             for invoice in list_invoices_response.invoices[::-1]:
                 if invoice.settled and invoice.settle_date < now - ONE_MONTH:
-                    print(hashes)
                     return hashes
                 if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - ONE_MONTH:
                     hashes.append(invoice.r_hash.hex())
