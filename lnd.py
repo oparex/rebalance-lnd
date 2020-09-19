@@ -64,8 +64,10 @@ class Lnd:
         add_invoice_response = self.stub.AddInvoice(invoice_request)
         return self.decode_payment_request(add_invoice_response.payment_request)
 
-    def list_invoices(self, max_invoices):
-        list_invoices_request = ln.ListInvoiceRequest()
+    def list_invoices(self, index_offset):
+        list_invoices_request = ln.ListInvoiceRequest(
+            index_offset=index_offset,
+        )
         return self.stub.ListInvoices(list_invoices_request)
 
     def decode_payment_request(self, payment_request):

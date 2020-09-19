@@ -6,6 +6,6 @@ class FeeReport:
 
     def generate(self):
         feereport = self.lnd.get_feereport()
-        invoices = self.lnd.list_invoices(10)
+        invoices = self.lnd.list_invoices(100)
         print(invoices)
         return True
