@@ -45,8 +45,10 @@ class FeeReport:
             list_invoices_response = self.lnd.list_invoices(-i * 100)
             i += 1
 
-            print(i, list_invoices_response.invoices[0].creation_date, list_invoices_response.invoices[0].settle_date,
-                  list_invoices_response.invoices[-1].creation_date, list_invoices_response.invoices[-1].settle_date)
+            print(i, list_invoices_response)
+
+            # print(i, list_invoices_response.invoices[0].creation_date, list_invoices_response.invoices[0].settle_date,
+            #       list_invoices_response.invoices[-1].creation_date, list_invoices_response.invoices[-1].settle_date)
 
             for invoice in list_invoices_response.invoices:
                 # print(i, invoice.creation_date, invoice.settle_date)
