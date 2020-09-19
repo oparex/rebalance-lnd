@@ -25,6 +25,6 @@ class FeeReport:
 
         for payment in list_payments_response.payments:
             if payment.payment_hash in rebalance_invoice_payment_hashs:
-                print payment.fee_msat
+                print(payment.fee_msat)
 
         return True
