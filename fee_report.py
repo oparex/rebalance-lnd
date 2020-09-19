@@ -1,4 +1,5 @@
 import time
+
 DAY = 60*60*24
 WEEK = DAY*7
 MONTH = DAY*30
@@ -46,6 +47,7 @@ class FeeReport:
 
             for invoice in list_invoices_response.invoices[::-1]:
                 if invoice.settled and invoice.settle_date < now - MONTH:
+                    print(i, invoice.settle_date, now)
                     return hashes
                 if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - MONTH:
                     hashes.append(invoice.r_hash.hex())
