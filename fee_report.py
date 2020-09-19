@@ -21,6 +21,10 @@ class FeeReport:
             if invoice.settled and "Rebalance" in invoice.memo:
                 rebalance_invoice_payment_hashs.append(invoice.r_hash.hex())
 
-        print(rebalance_invoice_payment_hashs)
+        list_payments_response = self.lnd.list_payments()
+
+        for payment in list_payments_response.payments:
+            print payment
+            break
 
         return True
