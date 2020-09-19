@@ -42,7 +42,7 @@ class FeeReport:
         hashes = []
         i = 0
         while i < 10:
-            list_invoices_response = self.lnd.list_invoices(i * 100)
+            list_invoices_response = self.lnd.list_invoices(-i * 100)
             i += 1
 
             print(i, list_invoices_response.invoices[0].creation_date, list_invoices_response.invoices[0].settle_date,
