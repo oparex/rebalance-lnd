@@ -5,6 +5,7 @@ import sys
 
 from lnd import Lnd
 from logic import Logic
+from fee_report import FeeReport
 
 MAX_SATOSHIS_PER_TRANSACTION = 4294967
 
@@ -13,6 +14,10 @@ def main():
     argument_parser = get_argument_parser()
     arguments = argument_parser.parse_args()
     lnd = Lnd(arguments.lnddir, arguments.grpc, arguments.max_fee_factor)
+
+    if arguments.fee_report:
+        return FeeReport(lnd).generate()
+
     from_channel = vars(arguments)['from']
     to_channel = arguments.to
     from_ratio = arguments.from_ratio
@@ -60,6 +65,9 @@ def get_argument_parser():
                         default="localhost:10009",
                         dest="grpc",
                         help="(default localhost:10009) lnd gRPC endpoint")
+    parser.add_argument("--fee_report",
+                        default=False,
+                        help="(default false) toggle to print fee report")
     rebalance_group = parser.add_argument_group("rebalance",
                                                 "Rebalance a channel. You need to specify at least"
                                                 " the 'from' channel (-f) or the 'to' channel (-t).")

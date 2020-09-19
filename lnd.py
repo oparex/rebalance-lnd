@@ -99,6 +99,14 @@ class Lnd:
         except:
             return None
 
+    def get_feereport(self):
+        request = ln.FeeReportRequest()
+        try:
+            response = self.stub.FeeReport(request)
+            return response
+        except:
+            return None
+
     def send_payment(self, payment_request, route):
         request = lnrouter.SendToRouteRequest(route=route)
         request.payment_hash = self.hex_string_to_bytes(payment_request.payment_hash)
