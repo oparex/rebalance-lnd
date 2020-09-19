@@ -70,10 +70,8 @@ class Lnd:
         )
         return self.stub.ListInvoices(list_invoices_request)
 
-    def list_payments(self, index_offset):
-        list_payments_request = ln.ListPaymentsRequest(
-            index_offset=index_offset,
-        )
+    def list_payments(self):
+        list_payments_request = ln.ListPaymentsRequest()
         return self.stub.ListPayments(list_payments_request)
 
     def decode_payment_request(self, payment_request):
