@@ -33,7 +33,9 @@ class FeeReport:
             list_invoices_response = self.lnd.list_invoices(i * 100)
 
             for invoice in list_invoices_response.invoices:
+                print(invoice.creation_date, invoice.settled_date)
                 if invoice.settled and invoice.settle_date < now - ONE_MONTH:
+                    print(hashes)
                     return hashes
                 if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - ONE_MONTH:
                     hashes.append(invoice.r_hash.hex())
