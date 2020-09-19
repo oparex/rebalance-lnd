@@ -78,7 +78,8 @@ class Logic:
                     debug(
                         "Amount %d is too big for current local and/or remote balance of first and/or last hop channel."
                         % self.amount)
-                    self.amount_halving()
+                    if not self.amount_halving():
+                        return False
                 return self.rebalance()
         debug("All routes exhausted")
         if self.amount_halving():
