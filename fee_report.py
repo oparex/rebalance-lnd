@@ -40,4 +40,6 @@ class FeeReport:
                 # if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - ONE_MONTH:
                 #     hashes.append(invoice.r_hash.hex())
 
-                return hashes
+            return hashes
+
+            i += 1
