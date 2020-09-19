@@ -33,8 +33,7 @@ class FeeReport:
             list_invoices_response = self.lnd.list_invoices(i * 100)
             i += 1
 
-            for invoice in list_invoices_response.invoices:
-                print(invoice.creation_date, invoice.settle_date)
+            for invoice in list_invoices_response.invoices[::-1]:
                 if invoice.settled and invoice.settle_date < now - ONE_MONTH:
                     print(hashes)
                     return hashes
