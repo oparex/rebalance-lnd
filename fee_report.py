@@ -19,7 +19,7 @@ class FeeReport:
 
         for invoice in list_invoices_response.invoices:
             if invoice.settled and "Rebalance" in invoice.memo:
-                rebalance_invoice_payment_hashs.append(invoice.r_hash)
+                rebalance_invoice_payment_hashs.append(invoice.r_hash.hex())
 
         print(rebalance_invoice_payment_hashs)
 
