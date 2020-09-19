@@ -6823,13 +6823,6 @@ _LISTPAYMENTSREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='index_offset', full_name='lnrpc.ListPaymentsRequest.index_offset', index=1,
-      number=4, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, json_name='index_offset', file=DESCRIPTOR),
   ],
   extensions=[
   ],
