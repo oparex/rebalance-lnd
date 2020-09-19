@@ -8,16 +8,16 @@ class FeeReport:
         report = {}
         rebalance_invoice_payment_hashs = []
 
-        feereport = self.lnd.get_feereport()
-        report["day_fee_sum"] = feereport.day_fee_sum
-        report["week_fee_sum"] = feereport.week_fee_sum
-        report["month_fee_sum"] = feereport.month_fee_sum
+        feereport_response = self.lnd.get_feereport()
+        report["day_fee_sum"] = feereport_response.day_fee_sum
+        report["week_fee_sum"] = feereport_response.week_fee_sum
+        report["month_fee_sum"] = feereport_response.month_fee_sum
 
         print(report)
 
-        invoices = self.lnd.list_invoices(0)
+        list_invoices_response = self.lnd.list_invoices(0)
 
-        for invoice in invoices:
+        for invoice in list_invoices_response.invoices:
             if invoice.settled and "Rebalance" in invoice.memo:
                 rebalance_invoice_payment_hashs.append(invoice.payment_hash)
 
