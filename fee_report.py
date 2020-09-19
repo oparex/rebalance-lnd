@@ -1,6 +1,7 @@
 import time
-
-ONE_MONTH = 60*60*24*30
+DAY = 60*60*24
+WEEK = DAY*7
+MONTH = DAY*30
 
 class FeeReport:
     def __init__(self, lnd):
@@ -12,22 +13,27 @@ class FeeReport:
         report = {}
 
         feereport_response = self.lnd.get_feereport()
-        report["day_fee_sum"] = feereport_response.day_fee_sum
-        report["week_fee_sum"] = feereport_response.week_fee_sum
-        report["month_fee_sum"] = feereport_response.month_fee_sum
+        report["day_fee_sum"] = feereport_response.day_fee_sum * 1000
+        report["week_fee_sum"] = feereport_response.week_fee_sum * 1000
+        report["month_fee_sum"] = feereport_response.month_fee_sum * 1000
+        report["day_fee_reb"] = 0
+        report["week_fee_reb"] = 0
+        report["month_fee_reb"] = 0
 
         rebalance_invoice_hashes = self.get_invoice_hashes(now)
-        print(len(rebalance_invoice_hashes))
 
         list_payments_response = self.lnd.list_payments()
 
-        payments_found = 0
-
         for payment in list_payments_response.payments:
             if payment.payment_hash in rebalance_invoice_hashes:
-                payments_found += 1
+                if payment.creation_date > now - DAY:
+                    report["day_fee_reb"] += payment.fee_msat
+                if payment.creation_date > now - WEEK:
+                    report["week_fee_reb"] += payment.fee_msat
+                if payment.creation_date > now - MONTH:
+                    report["month_fee_reb"] += payment.fee_msat
 
-        print(payments_found)
+        print(report)
 
         return True
 
@@ -39,7 +45,7 @@ class FeeReport:
             i += 1
 
             for invoice in list_invoices_response.invoices[::-1]:
-                if invoice.settled and invoice.settle_date < now - ONE_MONTH:
+                if invoice.settled and invoice.settle_date < now - MONTH:
                     return hashes
-                if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - ONE_MONTH:
+                if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - MONTH:
                     hashes.append(invoice.r_hash.hex())
