@@ -164,7 +164,7 @@ class Logic:
 
     def route_is_invalid(self, route, routes):
         if self.fees_too_high(route):
-            routes.ignore_node_with_highest_fee(route)
+            # routes.ignore_node_with_highest_fee(route)
             return True
         return False
 
@@ -172,6 +172,7 @@ class Logic:
         # hops_with_fees = len(route.hops) - 1
         # lnd_fees = hops_with_fees * (DEFAULT_BASE_FEE_SAT_MSAT + (self.amount * DEFAULT_FEE_RATE_MSAT))
         # limit = self.max_fee_factor * lnd_fees
+        debugnobreak("Route fee is too high @ %d msat \n" % route.total_fees_msat)
         limit = self.max_fee_factor * 1000
         return route.total_fees_msat > limit
 
