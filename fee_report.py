@@ -41,21 +41,16 @@ class FeeReport:
     def get_invoice_hashes(self, now):
         hashes = []
 
+        one_month_old_cnt = 0
+
         first_index_offset = 100
-        i = 0
-        while i < 5:
+        while one_month_old_cnt < 10:
             list_invoices_response = self.lnd.list_invoices(first_index_offset - 100)
             first_index_offset = list_invoices_response.first_index_offset
-            i += 1
 
-            print(i, list_invoices_response.invoices[0].creation_date, list_invoices_response.invoices[0].settle_date,
-                  list_invoices_response.invoices[-1].creation_date, list_invoices_response.invoices[-1].settle_date)
-
-            for invoice in list_invoices_response.invoices:
-                # print(i, invoice.creation_date, invoice.settle_date)
-                # if invoice.settled and invoice.settle_date < now - MONTH:
-                #     print(i, invoice.settle_date, now)
-                #     return hashes
+            for invoice in list_invoices_response.invoices[::-1]:
+                if invoice.settled and invoice.settle_date < now - MONTH:
+                    one_month_old_cnt += 1
                 if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - MONTH:
                     hashes.append(invoice.r_hash.hex())
 
