@@ -5,8 +5,14 @@ class FeeReport:
         self.lnd = lnd
 
     def generate(self):
-        # feereport = self.lnd.get_feereport()
+        feereport = self.lnd.get_feereport()
+
+
+
         # invoices = self.lnd.list_invoices(0)
-        payments = self.lnd.list_payments()
-        print(payments)
+
+
+
+        # payments = self.lnd.list_payments()
+        print(feereport)
         return True
