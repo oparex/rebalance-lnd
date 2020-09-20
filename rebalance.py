@@ -20,8 +20,8 @@ def main():
 
     from_channel = vars(arguments)['from']
     to_channel = arguments.to
-    from_ratio = arguments.from_ratio
-    to_ratio = arguments.to_ratio
+    from_ratio = arguments.from_ratio / 100
+    to_ratio = arguments.to_ratio / 100
     max_amount_halvings = arguments.max_amount_halvings
     amount = min(int(arguments.amount), MAX_SATOSHIS_PER_TRANSACTION)
 
