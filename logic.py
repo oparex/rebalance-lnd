@@ -89,6 +89,7 @@ class Logic:
                              self.num_amount_halvings + 1).rebalance()
         debug("All routes exhausted. %d %d" % (self.num_amount_halvings, self.max_amount_halvings))
         if self.num_amount_halvings < self.max_amount_halvings:
+            print("in")
             return Logic(self.lnd,
                          self.first_hop_channel_id,
                          self.last_hop_channel_id,
