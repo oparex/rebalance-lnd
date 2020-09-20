@@ -65,7 +65,7 @@ class FeeReport:
 
         one_month_old_cnt = 0
 
-        first_index_offset = 100
+        first_index_offset = 0
         while one_month_old_cnt < 10:
             if first_index_offset - 100 < 0:
                 break
