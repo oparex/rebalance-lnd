@@ -81,7 +81,7 @@ class FeeReport:
             last_settled = 0
             for invoice in list_invoices_response.invoices[::-1]:
                 if invoice.settled and invoice.settle_date < now - MONTH:
-                    print(invoice)
+                    print(invoice.settle_date)
                     print(last_settled)
                     one_month_old_cnt += 1
                 if invoice.settled:
