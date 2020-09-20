@@ -87,7 +87,7 @@ class Logic:
                              self.max_fee_factor,
                              self.max_routes_to_request,
                              self.num_amount_halvings + 1).rebalance()
-        debug("All routes exhausted")
+        debug("All routes exhausted. %d %d" % (self.num_amount_halvings, self.max_amount_halvings))
         if self.num_amount_halvings < self.max_amount_halvings:
             return Logic(self.lnd,
                          self.first_hop_channel_id,

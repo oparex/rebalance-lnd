@@ -1,4 +1,5 @@
 import time
+# from terminaltables import AsciiTable
 
 DAY = 60*60*24
 WEEK = DAY*7
@@ -34,21 +35,28 @@ class FeeReport:
                 if payment.creation_date > now - MONTH:
                     report["month_fee_reb"] += payment.fee_msat
 
-        print("-----------------------------------------------------------------------")
-        print("|-----|\tcollected |\tpaid |\tsum |-----|")
-        print("|day---|\t%d\t|\t%d\t|\t%d\t|-----|" % (
-            report["day_fee_sum"],
-            report["day_fee_reb"] // 1000,
-            report["day_fee_sum"] - report["day_fee_reb"] // 1000))
-        print("|week--|\t%d\t|\t%d\t|\t%d\t|-----|" % (
-            report["week_fee_sum"],
-            report["week_fee_reb"] // 1000,
-            report["week_fee_sum"] - report["week_fee_reb"] // 1000))
-        print("|month-|\t%d\t|\t%d\t|\t%d\t|-----|" % (
-        report["month_fee_sum"],
-        report["month_fee_reb"] // 1000,
-        report["month_fee_sum"] - report["month_fee_reb"] // 1000))
-        print("-----------------------------------------------------------------------")
+        # table_data = [
+        #     ["", "collecter", "paid", "sum"],
+        #     ["day", str(report["day_fee_sum"]), str(report["day_fee_reb"] // 1000),
+        #      str(report["day_fee_sum"] - report["day_fee_reb"] // 1000)],
+        #     ["week", str(report["week_fee_sum"]), str(report["week_fee_reb"] // 1000),
+        #      str(report["week_fee_sum"] - report["week_fee_reb"] // 1000)],
+        #     ["month", str(report["month_fee_sum"]), str(report["month_fee_reb"] // 1000),
+        #      str(report["month_fee_sum"] - report["month_fee_reb"] // 1000)],
+        # ]
+        #
+        # table = AsciiTable(table_data)
+        # print(table.table)
+
+        report["day_fee_reb"] //= 1000
+        report["week_fee_reb"] //= 1000
+        report["month_fee_reb"] //= 1000
+
+        report["day_sum"] = report["day_fee_sum"] - report["day_fee_reb"]
+        report["week_sum"] = report["week_fee_sum"] - report["week_fee_reb"]
+        report["month_sum"] = report["month_fee_sum"] - report["month_fee_reb"]
+
+        print(report)
 
         return True
 
