@@ -56,7 +56,8 @@ class FeeReport:
         report["week_sum"] = report["week_fee_sum"] - report["week_fee_reb"]
         report["month_sum"] = report["month_fee_sum"] - report["month_fee_reb"]
 
-        print(report)
+        for k in report:
+            print(k, report[k])
 
         return True
 
@@ -74,6 +75,7 @@ class FeeReport:
 
             for invoice in list_invoices_response.invoices[::-1]:
                 if invoice.settled and invoice.settle_date < now - MONTH:
+                    print(invoice)
                     one_month_old_cnt += 1
                 if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - MONTH:
                     hashes.append(invoice.r_hash.hex())
