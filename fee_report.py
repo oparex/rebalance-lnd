@@ -83,3 +83,23 @@ class FeeReport:
                     hashes.append(invoice.r_hash.hex())
 
         return hashes
+
+    def get_mintgox_profit(self):
+        now = int(time.time())
+        got_paid = 0
+        first_index_offset = 0
+
+        loop = True
+
+        while loop:
+            list_invoices_response = self.lnd.list_invoices(first_index_offset)
+            first_index_offset = list_invoices_response.first_index_offset
+
+            for invoice in list_invoices_response.invoices[::-1]:
+                if invoice.settled and invoice.settle_date < now - WEEK:
+                    loop = False
+                if invoice.settled and ("Sats Stacker" in invoice.memo or "Sarutobi" in invoice.memo) \
+                        and invoice.settle_date > now - WEEK:
+                    got_paid += invoice.amount
+
+        print(got_paid)
