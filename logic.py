@@ -89,7 +89,6 @@ class Logic:
                              self.num_amount_halvings + 1).rebalance()
         debug("All routes exhausted. %d %d" % (self.num_amount_halvings, self.max_amount_halvings))
         if self.num_amount_halvings < self.max_amount_halvings:
-            print("in")
             return Logic(self.lnd,
                          self.first_hop_channel_id,
                          self.last_hop_channel_id,
@@ -131,11 +130,13 @@ class Logic:
     def channels_balanced(self):
         local_balance = self.last_hop_channel.local_balance
         remote_balance = self.last_hop_channel.remote_balance
+        print(local_balance, remote_balance, self.to_ratio)
         if local_balance / (local_balance + remote_balance) > self.to_ratio:
             return True
 
         local_balance = self.first_hop_channel.local_balance
         remote_balance = self.first_hop_channel.remote_balance
+        print(local_balance, remote_balance, self.to_ratio)
         if local_balance / (local_balance + remote_balance) < self.from_ratio:
             return True
 
