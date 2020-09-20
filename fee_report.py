@@ -67,8 +67,6 @@ class FeeReport:
 
         first_index_offset = 0
         while one_month_old_cnt < 10:
-            if first_index_offset - 100 < 0:
-                break
             list_invoices_response = self.lnd.list_invoices(first_index_offset)
             first_index_offset = list_invoices_response.first_index_offset
 
