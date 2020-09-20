@@ -67,8 +67,12 @@ class FeeReport:
 
         first_index_offset = 100
         while one_month_old_cnt < 10:
+            if first_index_offset - 100 < 0:
+                break
             list_invoices_response = self.lnd.list_invoices(first_index_offset - 100)
             first_index_offset = list_invoices_response.first_index_offset
+
+            print(list_invoices_response.first_index_offset, list_invoices_response.last_index_offset)
 
             for invoice in list_invoices_response.invoices[::-1]:
                 if invoice.settled and invoice.settle_date < now - MONTH:
