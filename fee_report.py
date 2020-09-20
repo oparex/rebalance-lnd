@@ -100,6 +100,7 @@ class FeeReport:
                     loop = False
                 if invoice.settled and ("Sats Stacker" in invoice.memo or "Sarutobi" in invoice.memo) \
                         and invoice.settle_date > now - WEEK:
+                    print(invoice)
                     got_paid += invoice.amount
 
         print(got_paid)
