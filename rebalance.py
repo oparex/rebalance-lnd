@@ -16,8 +16,8 @@ def main():
     lnd = Lnd(arguments.lnddir, arguments.grpc, arguments.max_fee_factor)
 
     if arguments.fee_report:
-        # return FeeReport(lnd).generate()
-        return FeeReport(lnd).get_mintgox_profit()
+        return FeeReport(lnd).generate()
+        # return FeeReport(lnd).get_mintgox_profit()
 
     from_channel = vars(arguments)['from']
     to_channel = arguments.to

@@ -22,12 +22,23 @@ class FeeReport:
         report["week_fee_reb"] = 0
         report["month_fee_reb"] = 0
 
-        rebalance_invoice_hashes = self.get_invoice_hashes(now)
+        # rebalance_invoice_hashes = self.get_invoice_hashes(now)
 
         list_payments_response = self.lnd.list_payments()
 
+        # for payment in list_payments_response.payments:
+        #     if payment.payment_hash in rebalance_invoice_hashes:
+        #         if payment.creation_date > now - DAY:
+        #             report["day_fee_reb"] += payment.fee_msat
+        #         if payment.creation_date > now - WEEK:
+        #             report["week_fee_reb"] += payment.fee_msat
+        #         if payment.creation_date > now - MONTH:
+        #             report["month_fee_reb"] += payment.fee_msat
+
         for payment in list_payments_response.payments:
-            if payment.payment_hash in rebalance_invoice_hashes:
+            decoded_request = self.lnd.decode_payment_request(payment.payment_request)
+
+            if "Rebalance" in decoded_request.description:
                 if payment.creation_date > now - DAY:
                     report["day_fee_reb"] += payment.fee_msat
                 if payment.creation_date > now - WEEK:
@@ -87,6 +98,7 @@ class FeeReport:
     def get_mintgox_profit(self):
         now = int(time.time())
         got_paid = 0
+        paid = 0
         first_index_offset = 0
 
         loop = True
@@ -105,4 +117,12 @@ class FeeReport:
         print(got_paid)
 
         list_payments_response = self.lnd.list_payments()
-        print(len(list_payments_response.payments))
+
+        for payment in list_payments_response.payments:
+            decoded_request = self.lnd.decode_payment_request(payment.payment_request)
+
+            if decoded_request.timestamp > now - WEEK\
+                    and ("mintgox" in decoded_request.description or "bananas" in decoded_request.description):
+                paid += payment.num_satoshis
+
+        print(paid)
