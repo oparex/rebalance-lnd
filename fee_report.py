@@ -103,3 +103,7 @@ class FeeReport:
                     got_paid += invoice.amt_paid_sat
 
         print(got_paid)
+
+        list_payments_response = self.lnd.list_payments()
+        print(list_payments_response.payments[0])
+        print(list_payments_response.payments[-1])
