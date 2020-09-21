@@ -22,23 +22,25 @@ class Reporter:
         report["week_fee_reb"] = 0
         report["month_fee_reb"] = 0
 
-        # rebalance_invoice_hashes = self.get_invoice_hashes(now)
+        rebalance_invoice_hashes = self.get_invoice_hashes(now)
 
         list_payments_response = self.lnd.list_payments()
-        print(len(list_payments_response.payments))
-
-        # for payment in list_payments_response.payments:
-        #     if payment.payment_hash in rebalance_invoice_hashes:
-        #         if payment.creation_date > now - DAY:
-        #             report["day_fee_reb"] += payment.fee_msat
-        #         if payment.creation_date > now - WEEK:
-        #             report["week_fee_reb"] += payment.fee_msat
-        #         if payment.creation_date > now - MONTH:
-        #             report["month_fee_reb"] += payment.fee_msat
+        print(len(list_payments_response.payments),
+              list_payments_response.payments[0],
+              list_payments_response.payments[-1])
 
         for payment in list_payments_response.payments:
-            decoded_request = self.lnd.decode_payment_request(payment.payment_request)
-            print(decoded_request)
+            if payment.payment_hash in rebalance_invoice_hashes:
+                if payment.creation_date > now - DAY:
+                    report["day_fee_reb"] += payment.fee_msat
+                if payment.creation_date > now - WEEK:
+                    report["week_fee_reb"] += payment.fee_msat
+                if payment.creation_date > now - MONTH:
+                    report["month_fee_reb"] += payment.fee_msat
+
+        # for payment in list_payments_response.payments:
+        #     decoded_request = self.lnd.decode_payment_request(payment.payment_request)
+        #     print(decoded_request)
 
             # if "Rebalance" in decoded_request.description:
             #     if payment.creation_date > now - DAY:
