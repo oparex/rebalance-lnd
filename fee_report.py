@@ -5,11 +5,11 @@ DAY = 60*60*24
 WEEK = DAY*7
 MONTH = DAY*30
 
-class FeeReport:
+class Reporter:
     def __init__(self, lnd):
         self.lnd = lnd
 
-    def generate(self):
+    def feereport(self):
         now = int(time.time())
 
         report = {}
@@ -25,6 +25,7 @@ class FeeReport:
         # rebalance_invoice_hashes = self.get_invoice_hashes(now)
 
         list_payments_response = self.lnd.list_payments()
+        print(len(list_payments_response.payments))
 
         # for payment in list_payments_response.payments:
         #     if payment.payment_hash in rebalance_invoice_hashes:
@@ -37,14 +38,15 @@ class FeeReport:
 
         for payment in list_payments_response.payments:
             decoded_request = self.lnd.decode_payment_request(payment.payment_request)
+            print(decoded_request)
 
-            if "Rebalance" in decoded_request.description:
-                if payment.creation_date > now - DAY:
-                    report["day_fee_reb"] += payment.fee_msat
-                if payment.creation_date > now - WEEK:
-                    report["week_fee_reb"] += payment.fee_msat
-                if payment.creation_date > now - MONTH:
-                    report["month_fee_reb"] += payment.fee_msat
+            # if "Rebalance" in decoded_request.description:
+            #     if payment.creation_date > now - DAY:
+            #         report["day_fee_reb"] += payment.fee_msat
+            #     if payment.creation_date > now - WEEK:
+            #         report["week_fee_reb"] += payment.fee_msat
+            #     if payment.creation_date > now - MONTH:
+            #         report["month_fee_reb"] += payment.fee_msat
 
         # table_data = [
         #     ["", "collecter", "paid", "sum"],
@@ -77,25 +79,26 @@ class FeeReport:
 
         return True
 
-    def get_invoice_hashes(self, now):
-        hashes = []
+    # obsolete if decode_payment works
+    # def get_invoice_hashes(self, now):
+    #     hashes = []
+    #
+    #     one_month_old_cnt = 0
+    #
+    #     first_index_offset = 0
+    #     while one_month_old_cnt < 2:
+    #         list_invoices_response = self.lnd.list_invoices(first_index_offset)
+    #         first_index_offset = list_invoices_response.first_index_offset
+    #
+    #         for invoice in list_invoices_response.invoices[::-1]:
+    #             if invoice.settled and invoice.settle_date < now - MONTH:
+    #                 one_month_old_cnt += 1
+    #             if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - MONTH:
+    #                 hashes.append(invoice.r_hash.hex())
+    #
+    #     return hashes
 
-        one_month_old_cnt = 0
-
-        first_index_offset = 0
-        while one_month_old_cnt < 2:
-            list_invoices_response = self.lnd.list_invoices(first_index_offset)
-            first_index_offset = list_invoices_response.first_index_offset
-
-            for invoice in list_invoices_response.invoices[::-1]:
-                if invoice.settled and invoice.settle_date < now - MONTH:
-                    one_month_old_cnt += 1
-                if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - MONTH:
-                    hashes.append(invoice.r_hash.hex())
-
-        return hashes
-
-    def get_mintgox_profit(self):
+    def mintgox(self):
         now = int(time.time())
         got_paid = 0
         paid = 0
