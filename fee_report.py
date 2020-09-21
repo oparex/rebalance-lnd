@@ -105,4 +105,4 @@ class FeeReport:
         print(got_paid)
 
         list_payments_response = self.lnd.list_payments()
-        print(list_payments_response.payments)
+        print(len(list_payments_response.payments))
