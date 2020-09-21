@@ -5,7 +5,7 @@ import sys
 
 from lnd import Lnd
 from logic import Logic
-from fee_report import FeeReport
+from fee_report import Reporter
 
 MAX_SATOSHIS_PER_TRANSACTION = 4294967
 
@@ -16,7 +16,7 @@ def main():
     lnd = Lnd(arguments.lnddir, arguments.grpc, arguments.max_fee_factor)
 
     if arguments.fee_report:
-        return FeeReport(lnd).generate()
+        return Reporter(lnd).feereport()
         # return FeeReport(lnd).get_mintgox_profit()
 
     from_channel = vars(arguments)['from']
