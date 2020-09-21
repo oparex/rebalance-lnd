@@ -82,23 +82,23 @@ class Reporter:
         return True
 
     # obsolete if decode_payment works
-    # def get_invoice_hashes(self, now):
-    #     hashes = []
-    #
-    #     one_month_old_cnt = 0
-    #
-    #     first_index_offset = 0
-    #     while one_month_old_cnt < 2:
-    #         list_invoices_response = self.lnd.list_invoices(first_index_offset)
-    #         first_index_offset = list_invoices_response.first_index_offset
-    #
-    #         for invoice in list_invoices_response.invoices[::-1]:
-    #             if invoice.settled and invoice.settle_date < now - MONTH:
-    #                 one_month_old_cnt += 1
-    #             if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - MONTH:
-    #                 hashes.append(invoice.r_hash.hex())
-    #
-    #     return hashes
+    def get_invoice_hashes(self, now):
+        hashes = []
+
+        one_month_old_cnt = 0
+
+        first_index_offset = 0
+        while one_month_old_cnt < 2:
+            list_invoices_response = self.lnd.list_invoices(first_index_offset)
+            first_index_offset = list_invoices_response.first_index_offset
+
+            for invoice in list_invoices_response.invoices[::-1]:
+                if invoice.settled and invoice.settle_date < now - MONTH:
+                    one_month_old_cnt += 1
+                if invoice.settled and "Rebalance" in invoice.memo and invoice.settle_date > now - MONTH:
+                    hashes.append(invoice.r_hash.hex())
+
+        return hashes
 
     def mintgox(self):
         now = int(time.time())
