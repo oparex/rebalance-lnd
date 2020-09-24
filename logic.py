@@ -102,10 +102,10 @@ class Logic:
         return False
 
     def try_route(self, payment_request, route, routes, tried_routes):
+        tried_routes.append(route)
+
         if self.route_is_invalid(route):
             return False
-
-        tried_routes.append(route)
 
         response = self.lnd.send_payment(payment_request, route)
         is_successful = response.failure.code == 0
