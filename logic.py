@@ -1,4 +1,5 @@
 import datetime
+import time
 import sys
 
 from routes import Routes
@@ -72,6 +73,7 @@ class Logic:
                        self.first_hop_channel.local_balance,
                        self.last_hop_channel.chan_id,
                        self.last_hop_channel.local_balance))
+                time.sleep(10)
                 self.update_channels()
                 debug("after update. channel %d local balance is %d. channel %d local balance is %d" %
                       (self.first_hop_channel.chan_id,
