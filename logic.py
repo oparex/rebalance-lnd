@@ -67,7 +67,17 @@ class Logic:
             route = routes.get_next()
             success = self.try_route(payment_request, route, routes, tried_routes)
             if success:
+                debug("channel %d local balance is %d. channel %d local balance is %d" %
+                      (self.first_hop_channel.chan_id,
+                       self.first_hop_channel.local_balance,
+                       self.last_hop_channel.chan_id,
+                       self.last_hop_channel.local_balance))
                 self.update_channels()
+                debug("after update. channel %d local balance is %d. channel %d local balance is %d" %
+                      (self.first_hop_channel.chan_id,
+                       self.first_hop_channel.local_balance,
+                       self.last_hop_channel.chan_id,
+                       self.last_hop_channel.local_balance))
                 if self.channels_balanced():
                     debug("Done with rabalancing %d and %d"
                           % (self.first_hop_channel.chan_id, self.last_hop_channel.chan_id))
