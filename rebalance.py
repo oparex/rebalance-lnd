@@ -5,7 +5,7 @@ import sys
 
 from lnd import Lnd
 from logic import Logic
-from fee_report import Reporter
+from reporter import Reporter
 
 MAX_SATOSHIS_PER_TRANSACTION = 4294967
 

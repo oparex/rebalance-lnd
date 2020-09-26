@@ -25,9 +25,9 @@ class Reporter:
         rebalance_invoice_hashes = self.get_invoice_hashes(now)
 
         list_payments_response = self.lnd.list_payments()
-        print(len(list_payments_response.payments),
-              list_payments_response.payments[0],
-              list_payments_response.payments[-1])
+        # print(len(list_payments_response.payments),
+        #       list_payments_response.payments[0],
+        #       list_payments_response.payments[-1])
 
         for payment in list_payments_response.payments:
             if payment.payment_hash in rebalance_invoice_hashes:
