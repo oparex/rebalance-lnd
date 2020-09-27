@@ -38,4 +38,9 @@ echo "Starting bitstamp -> TYLERDURDEN rebalance"
 # bitstamp -> TYLERDURDEN
 python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 702520859994226689 -a 400000 -l 3 --max-fee-factor 60
 
+echo "Starting bitstamp -> ACINQ rebalance"
+# bitstamp -> ACINQ
+python3 /home/peter/python/src/rebalance-lnd/rebalance.py -f 710251526247022593 -t 714957436098445312 -a 400000 -l 3 --max-fee-factor 60
+
+
 echo "--------------------------------------- END REBALANCE @ `date` -------------------------------------------"
